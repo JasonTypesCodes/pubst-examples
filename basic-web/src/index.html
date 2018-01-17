@@ -1,0 +1,46 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Basic Pubst Example</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+  <h1>What is your favorite color?</h1>
+  <select id="color-select">
+    <option value="" disabled selected>Please pick a color</option>
+    <option value="red">Red</option>
+    <option value="orange">Orange</option>
+    <option value="yellow">Yellow</option>
+    <option value="green">Green</option>
+    <option value="blue">Blue</option>
+    <option value="indigo">Indigo</option>
+    <option value="violet">Violet</option>
+  </select>
+  <br><br>
+  <div id="color-box">
+    <h2>Like this?</h2>
+  </div>
+  <br><br>
+  <div id="green-support">
+    <div class="no-color">
+      <span class="green-text">You know what color I like</span>?
+    </div>
+    <div class="green-on">
+      Yeah! <span class="green-text">GREEN</span> is the <span class="green-text">BEST</span>!!
+    </div>
+    <div class="green-off">
+      <p>Really?  You like <span class="chosen-color">COLOR</span> better than <span class="green-text">GREEN?</span></p>
+      <p>If you change your mind, you could always just click here:</p>
+      <button id="pick-green">You're right... Green is the best color</button>
+    </div>
+  </div>
+
+  <script src="libs/pubst.js"></script>
+  <script src="color-select.js"></script>
+  <script src="color-box.js"></script>
+  <script src="green-supporter.js"></script>
+</body>
+</html>
