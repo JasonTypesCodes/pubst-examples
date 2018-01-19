@@ -1,0 +1,11 @@
+
+#color-box {
+  color: white;
+  height: 200px;
+  width: 100%;
+  border: 1px solid black;
+}
+
+.green-text {
+  color: green;
+}
