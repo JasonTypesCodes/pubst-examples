@@ -34,6 +34,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     root.pubst = factory();
   }
 })(typeof self !== 'undefined' ? self : undefined, function () {
+
+  var config = {
+    showWarnings: true
+  };
+
+  function warn() {
+    if (config.showWarnings) {
+      var _console;
+
+      for (var _len = arguments.length, messages = Array(_len), _key = 0; _key < _len; _key++) {
+        messages[_key] = arguments[_key];
+      }
+
+      // eslint-disable-next-line no-console
+      (_console = console).warn.apply(_console, ['WARNING:'].concat(messages));
+    }
+  }
+
+  function configure(userConfig) {
+    for (var key in config) {
+      if (userConfig.hasOwnProperty(key)) {
+        config[key] = userConfig[key];
+      }
+    }
+  }
+
   var store = {};
   var subscribers = {};
 
@@ -67,8 +93,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var subs = allSubsFor(topic);
 
       if (subs.length === 0) {
-        // eslint-disable-next-line no-console
-        console.warn('WARNING:: There are no subscribers that match \'' + topic + '\'!');
+        warn('There are no subscribers that match \'' + topic + '\'!');
       } else {
         subs.forEach(function (sub) {
           scheduleCall(sub, store[topic], topic);
@@ -113,6 +138,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   return {
     clear: clear,
     clearAll: clearAll,
+    configure: configure,
     currentVal: currentVal,
     publish: publish,
     subscribe: subscribe
