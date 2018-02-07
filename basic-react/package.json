@@ -2,6 +2,7 @@
   "name": "basic-react",
   "version": "0.0.1",
   "description": "A basic example of a React app using pubst.",
+  "homepage": "https://voltisubito.github.io/pubst-examples/basic-react",
   "private": true,
   "author": "Jason Schindler",
   "license": "Apache-2.0",
