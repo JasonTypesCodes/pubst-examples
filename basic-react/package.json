@@ -1,9 +1,12 @@
 {
   "name": "basic-react",
-  "version": "0.1.0",
+  "version": "0.0.1",
+  "description": "A basic example of a React app using pubst.",
   "private": true,
+  "author": "Jason Schindler",
+  "license": "Apache-2.0",
   "dependencies": {
-    "pubst": "0.0.8",
+    "pubst": "0.0.9",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "react-scripts": "1.1.0"
