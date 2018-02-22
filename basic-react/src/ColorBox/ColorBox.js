@@ -8,11 +8,15 @@ class ColorBox extends Component {
   constructor() {
     super();
     this.state = {};
-    pubst.subscribe('COLOR', val => {
+    this.unsub = pubst.subscribe('COLOR', val => {
       this.setState({
         color: val
       });
     }, 'white');
+  }
+
+  componentWillUnmount() {
+    this.unsub();
   }
 
   render() {

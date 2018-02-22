@@ -10,11 +10,15 @@ class GreenSupporter extends Component {
     this.state = {
       color: ''
     };
-    pubst.subscribe('COLOR', val => {
+    this.unsub = pubst.subscribe('COLOR', val => {
       this.setState({
         color: val
       });
     }, 'NONE');
+  }
+
+  componentWillUnmount() {
+    this.unsub();
   }
 
   yayGreen = () => {
