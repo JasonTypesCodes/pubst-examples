@@ -52,16 +52,55 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
   }
 
-  function configure(userConfig) {
-    for (var key in config) {
-      if (userConfig.hasOwnProperty(key)) {
+  function configure() {
+    var userConfig = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    for (var key in userConfig) {
+      if (config.hasOwnProperty(key)) {
         config[key] = userConfig[key];
       }
     }
   }
 
   var store = {};
-  var subscribers = {};
+  var stringSubs = {};
+  var regexSubs = [];
+
+  function getStringSubsFor(topic) {
+    return Array.isArray(stringSubs[topic]) ? stringSubs[topic] : [];
+  }
+
+  function getRegexSubsFor(topic) {
+    return regexSubs.filter(function (sub) {
+      return Boolean(topic.match(sub.topic));
+    });
+  }
+
+  function addSub(subscriber) {
+    if (typeof subscriber.topic === 'string') {
+      stringSubs[subscriber.topic] = getStringSubsFor(subscriber.topic).concat(subscriber);
+    } else if (subscriber.topic instanceof RegExp) {
+      regexSubs.push(subscriber);
+    } else {
+      throw new Error('Unable to add subscriber.  Topic is not a string or a RegExp');
+    }
+  }
+
+  function removeSub(subscriber) {
+    if (typeof subscriber.topic === 'string') {
+      stringSubs[subscriber.topic] = getStringSubsFor(subscriber.topic).filter(function (sub) {
+        return sub !== subscriber;
+      });
+    } else if (subscriber.topic instanceof RegExp) {
+      regexSubs = regexSubs.filter(function (sub) {
+        return sub !== subscriber;
+      });
+    }
+  }
+
+  function allSubsFor(topic) {
+    return getStringSubsFor(topic).concat(getRegexSubsFor(topic));
+  }
 
   function isNotSet(item) {
     return item === null || typeof item === 'undefined';
@@ -79,12 +118,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     return value;
   }
 
-  function allSubsFor(topic) {
-    return Array.isArray(subscribers[topic]) ? subscribers[topic] : [];
-  }
-
-  function scheduleCall(callback, payload, topic) {
-    setTimeout(callback, 0, payload, topic);
+  function scheduleCall(handler, payload, def, topic) {
+    setTimeout(handler, 0, valueOrDefault(payload, def), topic);
   }
 
   function publish(topic, payload) {
@@ -96,28 +131,58 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         warn('There are no subscribers that match \'' + topic + '\'!');
       } else {
         subs.forEach(function (sub) {
-          scheduleCall(sub, store[topic], topic);
+          scheduleCall(sub.handler, store[topic], sub.default, topic);
         });
       }
     }
   }
 
-  function subscribe(topic, callback, def) {
-    var mySub = function mySub(payload, topic) {
-      callback(valueOrDefault(payload, def), topic);
+  function subscribe(topic, handler, def) {
+    var subscription = {
+      topic: topic,
+      default: undefined,
+      handler: function handler() {}
     };
 
-    subscribers[topic] = allSubsFor(topic).concat(mySub);
-
-    var current = currentVal(topic, def);
-    if (isSet(current)) {
-      scheduleCall(mySub, current, topic);
+    if (typeof handler === 'function') {
+      subscription.default = def;
+      subscription.handler = handler;
+    } else if ((typeof handler === 'undefined' ? 'undefined' : _typeof(handler)) === 'object') {
+      for (var key in handler) {
+        if (subscription.hasOwnProperty(key)) {
+          subscription[key] = handler[key];
+        }
+      }
     }
 
-    return function () {
-      subscribers[topic] = allSubsFor(topic).filter(function (aSub) {
-        return aSub !== mySub;
+    addSub(subscription);
+
+    var stored = void 0;
+
+    if (typeof topic === 'string') {
+      stored = [{
+        topic: topic,
+        val: currentVal(topic, def)
+      }];
+    } else if (topic instanceof RegExp) {
+      stored = Object.keys(store).filter(function (key) {
+        return key.match(topic);
+      }).map(function (key) {
+        return {
+          topic: key,
+          val: currentVal(key, def)
+        };
       });
+    }
+
+    stored.forEach(function (item) {
+      if (isSet(item.val)) {
+        scheduleCall(subscription.handler, item.val, subscription.default, item.topic);
+      }
+    });
+
+    return function () {
+      removeSub(subscription);
     };
   }
 
