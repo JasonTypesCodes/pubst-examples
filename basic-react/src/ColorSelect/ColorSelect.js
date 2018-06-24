@@ -1,23 +1,10 @@
 import React, { Component } from 'react';
 import pubst from 'pubst';
+import {subscriber} from 'react-pubst';
 
 import './ColorSelect.css';
 
 class ColorSelect extends Component {
-
-  constructor() {
-    super();
-    this.state = {};
-    this.unsub = pubst.subscribe('COLOR', val => {
-      this.setState({
-        color: val
-      });
-    }, '');
-  }
-
-  componentWillUnmount() {
-    this.unsub();
-  }
 
   colorSelected = (event) => {
     pubst.publish('COLOR', event.target.value);
@@ -28,7 +15,7 @@ class ColorSelect extends Component {
   }
 
   render() {
-    const {color} = this.state;
+    const {color} = this.props;
     return (
       <div className="ColorSelect">
         <select value={color} onChange={this.colorSelected} >
@@ -50,4 +37,9 @@ class ColorSelect extends Component {
   }
 }
 
-export default ColorSelect;
+export default subscriber(ColorSelect, {
+  color: {
+    topic: 'COLOR',
+    default: ''
+  }
+});

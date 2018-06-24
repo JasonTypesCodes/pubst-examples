@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ColorBox from './ColorBox/ColorBox'
+import ColorBoxWrapper from './ColorBox/ColorBoxWrapper'
 import ColorSelect from './ColorSelect/ColorSelect'
 import GreenSupporter from './GreenSupporter/GreenSupporter';
 
@@ -12,7 +12,7 @@ class App extends Component {
       <div className="App">
         <ColorSelect/>
         <br/>
-        <ColorBox/>
+        <ColorBoxWrapper />
         <br/><br/>
         <GreenSupporter/>
       </div>

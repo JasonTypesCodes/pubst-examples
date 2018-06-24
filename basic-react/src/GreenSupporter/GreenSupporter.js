@@ -1,32 +1,17 @@
 import React, { Component } from 'react';
 import pubst from 'pubst';
+import {subscriber} from 'react-pubst';
 
 import './GreenSupporter.css';
 
 class GreenSupporter extends Component {
-
-  constructor() {
-    super();
-    this.state = {
-      color: ''
-    };
-    this.unsub = pubst.subscribe('COLOR', val => {
-      this.setState({
-        color: val
-      });
-    }, 'NONE');
-  }
-
-  componentWillUnmount() {
-    this.unsub();
-  }
 
   yayGreen = () => {
     pubst.publish('COLOR', 'green');
   }
 
   render() {
-    const {color} = this.state;
+    const {color} = this.props;
     return (
       <div className="GreenSupporter">
         {
@@ -54,4 +39,9 @@ class GreenSupporter extends Component {
   }
 }
 
-export default GreenSupporter;
+export default subscriber(GreenSupporter, {
+  color: {
+    topic: 'COLOR',
+    default: 'NONE'
+  }
+});
