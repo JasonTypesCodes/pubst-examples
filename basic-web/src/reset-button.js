@@ -1,3 +1,5 @@
 (function() {
-  document.getElementById('reset-button').onclick = pubst.clearAll
+  document.getElementById('reset-button').onclick = () => {
+    pubst.clearAll();
+  };
 })();
